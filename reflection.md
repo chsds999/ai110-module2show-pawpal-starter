@@ -60,6 +60,8 @@ I reviewed the AI-generated code against the assignment requirements, especially
 
 I also ran the task completion and task addition tests, and both passed. Automatic recurrence remains unimplemented; frequency is currently stored as task information.
 
+I did not accept AI’s suggested helper-method refactor because the existing conflict detection was short and readable. I kept the implementation already verified by nine conflict tests.
+
 ---
 
 ## 4. Testing and Verification
