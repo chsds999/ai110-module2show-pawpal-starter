@@ -7,10 +7,24 @@
 - Briefly describe your initial UML design.
 - What classes did you include, and what responsibilities did you assign to each?
 
+My design includes four classes:
+
+Owner: Stores owner information, available time, preferences, and pets.
+
+Pet: Stores pet information and care tasks.
+
+Task: Stores an activity’s duration, priority, and completion status.
+
+Scheduler: Selects tasks within the available time and explains the plan.
+
+Users can enter owner and pet information, manage tasks, and generate a daily plan.
+
 **b. Design changes**
 
 - Did your design change during implementation?
 - If yes, describe at least one change and why you made it.
+
+No design changes were needed yet. AI reviewed the skeleton and suggested skipping completed tasks, enforcing the time limit, and clearing old plans when generating a new one. I will address these during implementation.
 
 ---
 
@@ -35,10 +49,16 @@
 - How did you use AI tools during this project (for example: design brainstorming, debugging, refactoring)?
 - What kinds of prompts or questions were most helpful?
 
+I used AI to brainstorm classes, create UML, implement the backend, and draft a CLI demo and tests. Providing my existing skeleton and asking for matching code helped keep the design consistent.
+
 **b. Judgment and verification**
 
 - Describe one moment where you did not accept an AI suggestion as-is.
 - How did you evaluate or verify what the AI suggested?
+
+I reviewed the AI-generated code against the assignment requirements, especially the requirement for the Scheduler to retrieve all pets' tasks through Owner.get_all_tasks(). I verified the CLI output included tasks from both pets and stayed within the 45-minute limit.
+
+I also ran the task completion and task addition tests, and both passed. Automatic recurrence remains unimplemented; frequency is currently stored as task information.
 
 ---
 

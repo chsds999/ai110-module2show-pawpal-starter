@@ -1,94 +1,131 @@
 # PawPal+ (Module 2 Project)
 
-You are building **PawPal+**, a Streamlit app that helps a pet owner plan care tasks for their pet.
+PawPal+ helps pet owners organize care tasks and generate a daily plan based on available time, task priorities, and preferences.
 
 ## Scenario
 
-A busy pet owner needs help staying consistent with pet care. They want an assistant that can:
+A busy pet owner needs help staying consistent with pet care. The app is designed to:
 
-- Track pet care tasks (walks, feeding, meds, enrichment, grooming, etc.)
-- Consider constraints (time available, priority, owner preferences)
-- Produce a daily plan and explain why it chose that plan
+- Track tasks such as walks, feeding, medication, enrichment, and grooming.
+- Consider available time, priorities, and owner preferences.
+- Produce a daily plan and explain why tasks were selected or skipped.
 
-Your job is to design the system first (UML), then implement the logic in Python, then connect it to the Streamlit UI.
+## Current Implementation
 
-## What you will build
+The backend works through four Python classes:
 
-Your final app should:
+- **Owner:** Stores owner information, available time, preferences, and pets. Provides `get_all_tasks()` to retrieve tasks across all pets.
+- **Pet:** Stores pet information and supports adding and removing tasks.
+- **Task:** Stores an activity's name, description, category, duration, priority, frequency, and completion status.
+- **Scheduler:** Retrieves tasks through the Owner, selects tasks within the time budget, and explains its decisions.
 
-- Let a user enter basic owner + pet info
-- Let a user add/edit tasks (duration + priority at minimum)
-- Generate a daily schedule/plan based on constraints and priorities
-- Display the plan clearly (and ideally explain the reasoning)
-- Include tests for the most important scheduling behaviors
+The CLI demo in `main.py` demonstrates scheduling tasks for two pets. Streamlit integration and automated tests are upcoming steps.
 
-## Getting started
+## Getting Started
 
 ### Setup
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
 ```
 
-### Suggested workflow
+For Windows PowerShell, activate the environment with:
 
-1. Read the scenario carefully and identify requirements and edge cases.
-2. Draft a UML diagram (classes, attributes, methods, relationships).
-3. Convert UML into Python class stubs (no logic yet).
-4. Implement scheduling logic in small increments.
-5. Add tests to verify key behaviors.
-6. Connect your logic to the Streamlit UI in `app.py`.
-7. Refine UML so it matches what you actually built.
-
-## 🖥️ Sample Output
-
-Paste a sample of your app's CLI or Streamlit output here so a reader can see what a generated plan looks like:
-
-```
-# e.g.:
-# Daily plan for Biscuit (Golden Retriever):
-#   08:00 — Morning walk (30 min) [priority: high]
-#   09:00 — Feeding (10 min) [priority: high]
-#   ...
+```powershell
+.\.venv\Scripts\Activate.ps1
 ```
 
-## 🧪 Testing PawPal+
+### Run the CLI Demo
 
 ```bash
-# Run the full test suite:
-pytest
-
-# Run with coverage:
-pytest --cov
+python main.py
 ```
 
-Sample test output:
+## Project Files
 
+- `pawpal_system.py`: Backend classes and scheduling logic.
+- `main.py`: Terminal demonstration using two pets.
+- `app.py`: Streamlit UI starter.
+- `diagrams/uml_draft.mmd`: Initial UML class diagram.
+- `reflection.md`: Design decisions and project reflections.
+- `ai_interactions.md`: AI collaboration notes.
+- `requirements.txt`: Project dependencies.
+
+## Sample Output
+
+Actual output from running `python main.py`:
+
+```text
+Today's Schedule for Sai
+Available time: 45 minutes
+----------------------------------------
+1. Biscuit: Morning walk (30 min) [priority: 1]
+2. Luna: Feeding (10 min) [priority: 1]
+3. Luna: Playtime (5 min) [priority: 2]
+
+Total scheduled: 45 minutes
+
+Why this plan?
+- Selected Morning walk: priority 1, fits the remaining time. Matches an owner preference.
+- Selected Feeding: priority 1, fits the remaining time.
+- Selected Playtime: priority 2, fits the remaining time.
+- Skipped Grooming: needs 20 minutes, but only 0 remain.
 ```
-# Paste your pytest output here
+
+## Scheduling Behavior
+
+Priority values are **1 = high, 2 = medium, and 3 = low**.
+
+| Feature | Method(s) | Behavior |
+|---------|-----------|----------|
+| Multi-pet scheduling | `Owner.get_all_tasks()`, `Scheduler.generate_plan()` | Retrieves tasks from every pet belonging to the owner. |
+| Task sorting | `Scheduler.generate_plan()` | Sorts by priority, then preferred category. Preserves original order for remaining ties. |
+| Time filtering | `Scheduler.generate_plan()` | Skips tasks that exceed the remaining time and continues checking other tasks. |
+| Completion filtering | `Scheduler.generate_plan()` | Skips completed tasks. |
+| Plan explanations | `Scheduler.explain_plan()` | Explains why each task was selected or skipped. |
+| Input validation | `Owner.update_available_time()`, `Task.update_details()` | Rejects negative available time, nonpositive task durations, and priorities outside 1–3. |
+| Plan regeneration | `Scheduler.generate_plan()` | Clears the previous plan and explanations before rebuilding. |
+| Conflict handling | Not implemented | The current plan uses a total time budget without appointment times or overlapping time slots. |
+| Recurring tasks | `Task.frequency` | Stores frequency; automatic recurrence and due-date tracking are not implemented. |
+
+## Testing
+
+Automated tests will be added in the next project step.
+
+Install pytest and run tests with:
+
+```bash
+python -m pip install pytest
+python -m pytest
 ```
 
-## 📐 Smarter Scheduling
+For optional coverage reporting:
 
-> Fill in once you've implemented scheduling logic.
+```bash
+python -m pip install pytest-cov
+python -m pytest --cov=pawpal_system
+```
 
-| Feature | Method(s) | Notes |
-|---------|-----------|-------|
-| Task sorting | | e.g., by priority, duration |
-| Filtering | | e.g., skip tasks if time runs out |
-| Conflict handling | | e.g., overlapping time slots |
-| Recurring tasks | | e.g., daily vs. weekly |
+### Test Results
 
-## 📸 Demo Walkthrough
+Pending implementation and execution of the initial automated tests.
 
-Describe your app in numbered steps so a reader can follow along without watching a video:
+## CLI Demo Walkthrough
 
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
+1. Run `python main.py`.
+2. The script creates an owner with 45 minutes available and a preference for walks.
+3. It creates two pets: Biscuit and Luna.
+4. It adds walking, grooming, feeding, and playtime tasks.
+5. The scheduler retrieves tasks from both pets and orders them by priority and preference.
+6. It selects the walk, feeding, and playtime tasks, totaling 45 minutes.
+7. It prints the plan and explains why grooming was skipped.
 
-**Screenshot or video** *(optional)*: <!-- Insert a screenshot or link to a demo video here -->
+## Next Steps
+
+- Add automated tests for task completion and task addition.
+- Test important scheduling behaviors and edge cases.
+- Connect the backend to the Streamlit UI.
+- Update the UML to match the final implementation.
+- Complete the remaining project reflections.
