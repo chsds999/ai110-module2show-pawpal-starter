@@ -30,6 +30,21 @@ def test_daily_task_creates_next_occurrence():
     assert new_task.frequency == "daily"
 
 
+def test_next_occurrence_preserves_task_details():
+    task = Task(
+        "Walk", "walk", 30, 2, frequency="daily", due_date=TODAY,
+        description="Around the park", scheduled_time="07:45",
+    )
+    pet = make_pet(task)
+
+    new_task = pet.complete_task(task)
+
+    assert new_task.scheduled_time == "07:45"
+    assert new_task.description == "Around the park"
+    assert new_task.priority == 2
+    assert new_task.category == "walk"
+
+
 def test_weekly_task_creates_next_occurrence():
     task = Task("Bath", "grooming", 15, 3, frequency="weekly", due_date=TODAY)
     pet = make_pet(task)

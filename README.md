@@ -125,11 +125,9 @@ Priority values are **1 = high, 2 = medium, and 3 = low**. Tasks may have an opt
 
 Limitations: conflict detection compares start times only and ignores task durations, and recurrence is triggered only through `Pet.complete_task()`. Calling `Task.mark_complete()` directly does not create a next occurrence.
 
-## Testing
+## Testing PawPal+
 
-The suite in `tests/` covers task completion and addition, daily/weekly/once recurrence, repeated completion, future-task exclusion, and conflict detection.
-
-Install pytest and run tests with:
+Install pytest and run the suite from the project root with:
 
 ```bash
 python -m pip install pytest
@@ -143,9 +141,41 @@ python -m pip install pytest-cov
 python -m pytest --cov=pawpal_system
 ```
 
-### Test Results
+### Behaviors Covered
 
-22 tests passed (`python -m pytest -q tests`).
+- **Sorting:** chronological order by `HH:MM`, untimed tasks last, and the input list left unchanged.
+- **Filtering:** by pet, by completion status, by both combined, and an unknown pet returning nothing.
+- **Multi-pet scheduling:** a shared time budget across pets, priority before preference, preference breaking priority ties, ties resolved by pet order then task order, empty task lists, and repeated generation without duplicates.
+- **Time-budget boundaries:** a task that exactly fits is selected, oversized tasks are skipped while smaller ones still fit, and zero available time schedules nothing.
+- **Recurrence:** daily, weekly, and one-time tasks, overdue and future due dates, preserved time, description, priority, and category, no duplicates on repeated completion, and rejection of tasks that belong to another pet.
+- **Conflicts:** same-time clashes across and within pets, three-way clashes reported once, and different times, different dates, completed tasks, and untimed tasks ignored. Conflicts never block plan generation.
+- **Validation:** invalid durations, priorities, frequencies, and `HH:MM` times are rejected.
+
+### Latest Test Results
+
+```text
+============================= test session starts ==============================
+platform darwin -- Python 3.13.7, pytest-9.1.1, pluggy-1.7.0
+rootdir: /Users/saicherukuru/Desktop/Code Path AI/ai110-module2show-pawpal-starter
+plugins: anyio-4.15.1
+collected 58 items
+
+tests/test_conflicts.py .........                                        [ 15%]
+tests/test_pawpal.py ..                                                  [ 18%]
+tests/test_recurrence.py ............                                    [ 39%]
+tests/test_scheduling.py .........                                       [ 55%]
+tests/test_sorting_filtering.py .......                                  [ 67%]
+tests/test_validation.py ...................                             [100%]
+
+============================== 58 passed in 0.03s ==============================
+```
+
+### Confidence Level: ★★★★☆ (4/5)
+
+The core backend behaviors (scheduling, sorting, filtering, recurrence, conflict warnings, and validation) all pass. Confidence is not 5/5 for two reasons:
+
+- Conflict detection compares exact start times, not overlapping durations, so a 30-minute task at 08:00 and another task at 08:15 are not flagged.
+- Automated UI testing is outside this suite, so the Streamlit app in `app.py` is not covered by automated tests.
 
 ## CLI Demo Walkthrough
 
